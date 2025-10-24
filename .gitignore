@@ -27,6 +27,12 @@ go.work.sum
 # env file
 .env
 
+# database
+*.db
+
+# logs
+log.txt
+
 # Editor/IDE
 # .idea/
 # .vscode/
