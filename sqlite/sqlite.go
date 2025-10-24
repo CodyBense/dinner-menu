@@ -24,7 +24,7 @@ func FindAll(db *sql.DB) ([]Recipe, error) {
 
 	rows, err := db.Query(sql)
 	if err != nil {
-		log.Fatalf("Find all query failed: %s", err)
+		log.Fatalf("Find all query failed: %s\n", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -35,7 +35,7 @@ func FindAll(db *sql.DB) ([]Recipe, error) {
 		r := &Recipe{}
 		err := rows.Scan(&r.Id, &r.Name, &r.Cusine_Type, &r.Flavor, &r.Difficulty, &r.Time, &r.Liked, &r.Link, &r.Last_Used)
 		if err != nil {
-			log.Fatalf("Database row scan failed: %s", err)
+			log.Fatalf("Database row scan failed: %s\n", err)
 			return nil, err
 		}
 		recipes = append(recipes, *r)
