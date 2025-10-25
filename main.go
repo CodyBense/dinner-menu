@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/atotto/clipboard"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
@@ -38,6 +39,17 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		case "enter", "space":
 			clipboard.WriteAll(m.table.SelectedRow()[6])
+		case "l":
+			db, err := sql.Open("sqlite", "./sqlite/recipes.db")
+			if err != nil {
+				log.Fatalf("Could not connect to SQLite database: %s\n", err)
+			}
+
+			defer db.Close()
+
+			recipeName := m.table.SelectedRow()[0]
+			recipeID := sqlite.GetID(db, recipeName)
+			sqlite.UpdateLiked(db, recipeID)
 		}
 	}
 	m.table, cmd = m.table.Update(msg)
