@@ -7,5 +7,7 @@ CREATE TABLE menu (
         time INTEGER,
         liked INTEGER,
         link TEXT,
-        made INTEGER
+        made INTEGER,
+        FOREIGN KEY(id, name, cuisine_type, flavor, difficulty, time, liked, link)
+            REFERENCES recipes (id, name, cuisine_type, flavor, difficulty, time, liked, link)
 )
