@@ -2,28 +2,40 @@ package main
 
 import (
 	"database/sql"
+	"log"
+	"os"
+	"strconv"
+
 	"github.com/atotto/clipboard"
 	"github.com/charmbracelet/bubbles/table"
+	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/codybense/dinner-menu/sqlite"
 	_ "github.com/glebarez/go-sqlite"
-	"log"
-	"os"
-	"strconv"
 )
+
+type status int
 
 var baseStyle = lipgloss.NewStyle().
 	BorderStyle(lipgloss.NormalBorder()).
 	BorderForeground(lipgloss.Color("240"))
 
-type model struct {
+var modles []tea.Model
+
+const (
+	recipes_table status = iota
+	menu_table
+	update_text
+)
+
+type tableModel struct {
 	table table.Model
 }
 
-func (m model) Init() tea.Cmd { return nil }
+func (m tableModel) Init() tea.Cmd { return nil }
 
-func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m tableModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
@@ -49,19 +61,23 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			recipeName := m.table.SelectedRow()[0]
 			recipeID := sqlite.GetID(db, recipeName)
 			sqlite.SetLiked(db, recipeID)
-			m.table.SetRows(SetRowsData());
-			return m, nil
+			m.table.SetRows(SetRowsData())
+			// return m, nil
+			return m.Update(nil)
+		case "u":
+			modles[menu_table] = m
+			return modles[update_text], tea.Batch(tea.Println("update item"))
 		}
 	}
 	m.table, cmd = m.table.Update(msg)
 	return m, cmd
 }
 
-func (m model) View() string {
+func (m tableModel) View() string {
 	return baseStyle.Render(m.table.View()) + "\n"
 }
 
-func SetRowsData() []table.Row{
+func SetRowsData() []table.Row {
 	db, err := sql.Open("sqlite", "./sqlite/recipes.db")
 	if err != nil {
 		log.Fatalf("Could not connect to SQLite database: %s\n", err)
@@ -93,14 +109,7 @@ func SetRowsData() []table.Row{
 	return rows
 }
 
-func main() {
-	log_file, err := os.OpenFile("logs/log.txt", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-	if err != nil {
-		log.Fatalf("Could not open log filed; %s\n", err)
-	}
-
-	log.SetOutput(log_file)
-
+func InitTableModel() tableModel {
 	columns := []table.Column{
 		{Title: "Name", Width: 25},
 		{Title: "Cuisine Type", Width: 15},
@@ -132,8 +141,53 @@ func main() {
 		Bold(false)
 	t.SetStyles(s)
 
-	m := model{t}
-	if _, err := tea.NewProgram(m, tea.WithAltScreen()).Run(); err != nil {
+	m := tableModel{t}
+
+	return m
+}
+
+type inputModel struct {
+	id           textinput.Model
+	name         textinput.Model
+	cuisine_type textinput.Model
+	flavor       textinput.Model
+	difficulty   textinput.Model
+	time         textinput.Model
+	liked        textinput.Model
+	link         textinput.Model
+	last_used    textinput.Model
+}
+
+func (m inputModel) Init() tea.Cmd { return nil }
+
+func (m inputModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	var cmd tea.Cmd
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "esc":
+		case "q", "ctrl+c":
+			return m, tea.Quit
+		}
+	}
+	return m, cmd
+}
+
+func (m inputModel) View() string {
+	return "\n"
+}
+
+func main() {
+	log_file, err := os.OpenFile("logs/log.txt", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalf("Could not open log filed; %s\n", err)
+	}
+
+	log.SetOutput(log_file)
+
+	m := InitTableModel()
+	if _, err := tea.NewProgram(m).Run(); err != nil {
+		// if _, err := tea.NewProgram(m, tea.WithAltScreen()).Run(); err != nil {
 		log.Fatalf("Error running program: %s\n", err)
 	}
 }
