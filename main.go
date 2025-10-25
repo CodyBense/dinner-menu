@@ -48,7 +48,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			recipeName := m.table.SelectedRow()[0]
 			recipeID := sqlite.GetID(db, recipeName)
-			sqlite.UpdateLiked(db, recipeID)
+			sqlite.SetLiked(db, recipeID)
+			return m, tea.Sequence(tea.ClearScreen)
 		}
 	}
 	m.table, cmd = m.table.Update(msg)

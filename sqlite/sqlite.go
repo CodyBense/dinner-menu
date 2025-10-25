@@ -20,6 +20,11 @@ type Recipe struct {
 	Last_Used   string
 }
 
+type Menu struct {
+	Recipe Recipe
+	Made   bool
+}
+
 func FindAll(db *sql.DB) ([]Recipe, error) {
 	query := "SELECT * FROM recipes"
 
@@ -69,7 +74,7 @@ func GetID(db *sql.DB, recipeName string) int {
 	return recipes[0].Id
 }
 
-func UpdateLiked(db *sql.DB, recipeID int) {
+func GetLiked(db *sql.DB, recipeID int) bool {
 	getQuery := fmt.Sprintf("SELECT liked FROM recipes WHERE id = '%d'", recipeID)
 
 	rows, err := db.Query(getQuery)
@@ -90,7 +95,14 @@ func UpdateLiked(db *sql.DB, recipeID int) {
 		recipes = append(recipes, *r)
 	}
 
-	if recipes[0].Liked == false {
+	return recipes[0].Liked
+}
+
+func SetLiked(db *sql.DB, recipeID int) {
+
+	recipeLiked := GetLiked(db, recipeID)
+
+	if recipeLiked == false {
 		updateQuery := fmt.Sprintf("UPDATE recipes SET liked = 1 WHERE id = %d", recipeID)
 
 		_, err := db.Exec(updateQuery)
