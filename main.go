@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"github.com/atotto/clipboard"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
@@ -78,12 +77,12 @@ func main() {
 	recipes, err := sqlite.FindAll(db)
 
 	columns := []table.Column{
-		{Title: "Name", Width: 20},
-		{Title: "Cuisine Type", Width: 20},
-		{Title: "Flavor", Width: 20},
-		{Title: "Difficulty", Width: 20},
-		{Title: "Time", Width: 20},
-		{Title: "Liked", Width: 20},
+		{Title: "Name", Width: 25},
+		{Title: "Cuisine Type", Width: 15},
+		{Title: "Flavor", Width: 15},
+		{Title: "Difficulty", Width: 10},
+		{Title: "Time", Width: 10},
+		{Title: "Liked", Width: 10},
 		{Title: "Link", Width: 20},
 		{Title: "Last Used", Width: 20},
 	}
@@ -111,7 +110,7 @@ func main() {
 		table.WithColumns(columns),
 		table.WithRows(rows),
 		table.WithFocused(true),
-		table.WithHeight(11),
+		// table.WithHeight(11),
 	)
 
 	s := table.DefaultStyles()
@@ -127,7 +126,7 @@ func main() {
 	t.SetStyles(s)
 
 	m := model{t}
-	if _, err := tea.NewProgram(m).Run(); err != nil {
+	if _, err := tea.NewProgram(m, tea.WithAltScreen()).Run(); err != nil {
 		log.Fatalf("Error running program: %s\n", err)
 	}
 }
