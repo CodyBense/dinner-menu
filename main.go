@@ -49,7 +49,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			recipeName := m.table.SelectedRow()[0]
 			recipeID := sqlite.GetID(db, recipeName)
 			sqlite.SetLiked(db, recipeID)
-			return m, tea.Sequence(tea.ClearScreen)
+			m.table.SetRows(SetRowsData());
+			return m, nil
 		}
 	}
 	m.table, cmd = m.table.Update(msg)
@@ -60,14 +61,7 @@ func (m model) View() string {
 	return baseStyle.Render(m.table.View()) + "\n"
 }
 
-func main() {
-	log_file, err := os.OpenFile("logs/log.txt", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-	if err != nil {
-		log.Fatalf("Could not open log filed; %s\n", err)
-	}
-
-	log.SetOutput(log_file)
-
+func SetRowsData() []table.Row{
 	db, err := sql.Open("sqlite", "./sqlite/recipes.db")
 	if err != nil {
 		log.Fatalf("Could not connect to SQLite database: %s\n", err)
@@ -76,17 +70,6 @@ func main() {
 	defer db.Close()
 
 	recipes, err := sqlite.FindAll(db)
-
-	columns := []table.Column{
-		{Title: "Name", Width: 25},
-		{Title: "Cuisine Type", Width: 15},
-		{Title: "Flavor", Width: 15},
-		{Title: "Difficulty", Width: 10},
-		{Title: "Time", Width: 10},
-		{Title: "Liked", Width: 10},
-		{Title: "Link", Width: 20},
-		{Title: "Last Used", Width: 20},
-	}
 
 	rows := []table.Row{}
 
@@ -107,11 +90,34 @@ func main() {
 		rows = append(rows, newRow...)
 	}
 
+	return rows
+}
+
+func main() {
+	log_file, err := os.OpenFile("logs/log.txt", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalf("Could not open log filed; %s\n", err)
+	}
+
+	log.SetOutput(log_file)
+
+	columns := []table.Column{
+		{Title: "Name", Width: 25},
+		{Title: "Cuisine Type", Width: 15},
+		{Title: "Flavor", Width: 15},
+		{Title: "Difficulty", Width: 10},
+		{Title: "Time", Width: 10},
+		{Title: "Liked", Width: 10},
+		{Title: "Link", Width: 20},
+		{Title: "Last Used", Width: 20},
+	}
+
+	rows := SetRowsData()
+
 	t := table.New(
 		table.WithColumns(columns),
 		table.WithRows(rows),
 		table.WithFocused(true),
-		// table.WithHeight(11),
 	)
 
 	s := table.DefaultStyles()
