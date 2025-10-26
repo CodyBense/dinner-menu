@@ -11,13 +11,13 @@ import (
 	"strconv"
 )
 
-type tableModel struct {
+type TableModel struct {
 	table table.Model
 }
 
-func (m tableModel) Init() tea.Cmd { return nil }
+func (m TableModel) Init() tea.Cmd { return nil }
 
-func (m tableModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m TableModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
@@ -55,7 +55,7 @@ func (m tableModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
-func (m tableModel) View() string {
+func (m TableModel) View() string {
 	return baseStyle.Render(m.table.View()) + "\n"
 }
 
@@ -75,7 +75,7 @@ func SetRowsData() []table.Row {
 		newRow := []table.Row{
 			{
 				recipe.Name,
-				recipe.Cusine_Type,
+				recipe.Cuisine_Type,
 				recipe.Flavor,
 				recipe.Difficulty,
 				strconv.Itoa(recipe.Time),
@@ -91,7 +91,7 @@ func SetRowsData() []table.Row {
 	return rows
 }
 
-func InitTableModel() tableModel {
+func NewTable() TableModel {
 	columns := []table.Column{
 		{Title: "Name", Width: 25},
 		{Title: "Cuisine Type", Width: 15},
@@ -123,7 +123,7 @@ func InitTableModel() tableModel {
 		Bold(false)
 	t.SetStyles(s)
 
-	m := tableModel{t}
+	m := TableModel{t}
 
 	return m
 }
