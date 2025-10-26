@@ -6,26 +6,15 @@ import (
 	"log"
 
 	_ "github.com/glebarez/go-sqlite"
+	"github.com/codybense/dinner-menu/recipe"
 )
 
-type Recipe struct {
-	Id          int
-	Name        string
-	Cusine_Type string
-	Flavor      string
-	Difficulty  string
-	Time        int
-	Liked       bool
-	Link        string
-	Last_Used   string
-}
-
 type Menu struct {
-	Recipe Recipe
+	Recipe recipe.Recipe
 	Made   bool
 }
 
-func FindAll(db *sql.DB) ([]Recipe, error) {
+func FindAll(db *sql.DB) ([]recipe.Recipe, error) {
 	query := "SELECT * FROM recipes"
 
 	rows, err := db.Query(query)
@@ -35,11 +24,11 @@ func FindAll(db *sql.DB) ([]Recipe, error) {
 	}
 	defer rows.Close()
 
-	var recipes []Recipe
+	var recipes []recipe.Recipe
 
 	for rows.Next() {
-		r := &Recipe{}
-		err := rows.Scan(&r.Id, &r.Name, &r.Cusine_Type, &r.Flavor, &r.Difficulty, &r.Time, &r.Liked, &r.Link, &r.Last_Used)
+		r := &recipe.Recipe{}
+		err := rows.Scan(&r.Id, &r.Name, &r.Cuisine_Type, &r.Flavor, &r.Difficulty, &r.Time, &r.Liked, &r.Link, &r.Last_Used)
 		if err != nil {
 			log.Fatalf("FindAll row scan failed: %s\n", err)
 			return nil, err
@@ -60,10 +49,10 @@ func GetID(db *sql.DB, recipeName string) int {
 	}
 	defer rows.Close()
 
-	var recipes []Recipe
+	var recipes []recipe.Recipe
 
 	for rows.Next() {
-		r := &Recipe{}
+		r := &recipe.Recipe{}
 		err := rows.Scan(&r.Id)
 		if err != nil {
 			log.Fatalf("GetID row scan failed: %s\n", err)
@@ -83,10 +72,10 @@ func GetLiked(db *sql.DB, recipeID int) bool {
 	}
 	defer rows.Close()
 
-	var recipes []Recipe
+	var recipes []recipe.Recipe
 
 	for rows.Next() {
-		r := &Recipe{}
+		r := &recipe.Recipe{}
 		err := rows.Scan(&r.Liked)
 		if err != nil {
 			log.Fatalf("Upate getQuery row scan failed: %s\n", err)
