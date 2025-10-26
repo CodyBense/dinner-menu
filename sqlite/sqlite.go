@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log"
 
-	_ "github.com/glebarez/go-sqlite"
 	"github.com/codybense/dinner-menu/recipe"
+	_ "github.com/glebarez/go-sqlite"
 )
 
 type Menu struct {
@@ -106,5 +106,26 @@ func SetLiked(db *sql.DB, recipeID int) {
 			log.Fatalf("UpdateLiked query failed: %s\n", err)
 		}
 	}
+}
 
+func UpdateRecipe(db *sql.DB, name, cuisine_type, flavor, difficulty, time, liked, link, last_used string) {
+	recipeID := GetID(db, name)
+
+	updateQuery := fmt.Sprintf(`UPDATE recipes
+	SET name = '%s', 
+		cuisine_type = '%s',
+		flavor = '%s',
+		difficulty = '%s',
+		time = '%s',
+		liked = '%s',
+		link = '%s',
+		last_used = '%s'
+	WHERE
+		id = %d 
+	`, name, cuisine_type, flavor, difficulty, time, liked, link, last_used, recipeID)
+
+	_, err := db.Exec(updateQuery)
+	if err != nil {
+		log.Fatalf("UpdatedRecipe query failed: %s", err)
+	}
 }

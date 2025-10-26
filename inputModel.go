@@ -1,13 +1,18 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
+	"log"
+	// "strconv"
 	"strings"
 
 	"github.com/charmbracelet/bubbles/cursor"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/codybense/dinner-menu/sqlite"
+	// "github.com/codybense/dinner-menu/sqlite"
 )
 
 var (
@@ -22,15 +27,6 @@ var (
 	blurredButton = fmt.Sprintf("[ %s ]", blurredStyle.Render("Submit"))
 )
 
-// id
-// name
-// cuisine_type
-// flavor
-// difficulty
-// time
-// liked
-// link
-// last_used
 type InputModel struct {
 	focusIndex int
 	inputs     []textinput.Model
@@ -52,24 +48,24 @@ func initalModel(tm *TableModel) InputModel {
 
 		switch i {
 		case 0:
-			t.Placeholder = tm.table.SelectedRow()[0]
+			t.SetValue(tm.table.SelectedRow()[0])
 			t.Focus()
 			t.PromptStyle = focusedStyle
 			t.TextStyle = focusedStyle
 		case 1:
-			t.Placeholder = tm.table.SelectedRow()[1] 
+			t.SetValue(tm.table.SelectedRow()[1])
 		case 2:
-			t.Placeholder = tm.table.SelectedRow()[2] 
+			t.SetValue(tm.table.SelectedRow()[2])
 		case 3:
-			t.Placeholder = tm.table.SelectedRow()[3] 
+			t.SetValue(tm.table.SelectedRow()[3])
 		case 4:
-			t.Placeholder = tm.table.SelectedRow()[4] 
+			t.SetValue(tm.table.SelectedRow()[4])
 		case 5:
-			t.Placeholder = tm.table.SelectedRow()[5] 
+			t.SetValue(tm.table.SelectedRow()[5])
 		case 6:
-			t.Placeholder = tm.table.SelectedRow()[6] 
+			t.SetValue(tm.table.SelectedRow()[6])
 		case 7:
-			t.Placeholder = tm.table.SelectedRow()[7] 
+			t.SetValue(tm.table.SelectedRow()[7])
 		}
 
 		im.inputs[i] = t
@@ -106,7 +102,16 @@ func (im InputModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "tab", "shift+tab", "enter", "up", "down":
 			s := msg.String()
 			if s == "enter" && im.focusIndex == len(im.inputs) {
-				return im, tea.Quit
+				db, err := sql.Open("sqlite", "./sqlite/recipes.db")
+				if err != nil {
+					log.Fatalf("Could not connect to SQLite database: %s\n", err)
+				}
+
+				defer db.Close()
+				sqlite.UpdateRecipe(db, im.inputs[0].Value(), im.inputs[1].Value(), im.inputs[2].Value(), im.inputs[3].Value(), im.inputs[4].Value(), im.inputs[5].Value(), im.inputs[6].Value(), im.inputs[7].Value())
+				tm := NewTable()
+				return tm.Update(nil)
+				// return im, tea.Quit
 			}
 
 			if s == "up" || s == "shift+tab" {
