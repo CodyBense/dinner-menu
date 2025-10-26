@@ -44,11 +44,10 @@ func (m TableModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			recipeID := sqlite.GetID(db, recipeName)
 			sqlite.SetLiked(db, recipeID)
 			m.table.SetRows(SetRowsData())
-			// return m, nil
 			return m.Update(nil)
 		case "u":
-			modles[menu_table] = m
-			return modles[update_text], tea.Batch(tea.Println("update item"))
+			input := initalModel(&m)
+			return input.Update(nil)
 		}
 	}
 	m.table, cmd = m.table.Update(msg)

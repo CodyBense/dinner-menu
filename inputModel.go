@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	// "strconv"
 	"strings"
 
 	"github.com/charmbracelet/bubbles/cursor"
@@ -12,7 +11,6 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/codybense/dinner-menu/sqlite"
-	// "github.com/codybense/dinner-menu/sqlite"
 )
 
 var (
@@ -147,16 +145,6 @@ func (im InputModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	cmd := im.updateInputs(msg)
 
 	return im, cmd
-	// var cmd tea.Cmd
-	// switch msg := msg.(type) {
-	// case tea.KeyMsg:
-	// 	switch msg.String() {
-	// 	case "esc":
-	// 	case "q", "ctrl+c":
-	// 		return m, tea.Quit
-	// 	}
-	// }
-	// return m, cmd
 }
 
 func (im *InputModel) updateInputs(msg tea.Msg) tea.Cmd {
@@ -190,32 +178,5 @@ func (im InputModel) View() string {
 	b.WriteString(helpStyle.Render(" (ctrl+r to change style)"))
 
 	return b.String()
-	// return "\n"
 }
 
-// func NewInput(recipes *TableModel) *InputModel {
-// 	input := &InputModel{
-// 		id: textinput.New(),
-// 		name: textinput.New(),
-// 		cuisine_type: textinput.New(),
-// 		flavor: textinput.New(),
-// 		difficulty: textinput.New(),
-// 		time: textinput.New(),
-// 		liked: textinput.New(),
-// 		link: textinput.New(),
-// 		last_used: textinput.New(),
-// 	}
-//
-// 	input.name.Placeholder = recipes.table.SelectedRow()[0]
-// 	input.cuisine_type.Placeholder = recipes.table.SelectedRow()[1]
-// 	input.flavor.Placeholder = recipes.table.SelectedRow()[2]
-// 	input.difficulty.Placeholder = recipes.table.SelectedRow()[3]
-// 	input.time.Placeholder = recipes.table.SelectedRow()[4]
-// 	input.liked.Placeholder = recipes.table.SelectedRow()[5]
-// 	input.link.Placeholder = recipes.table.SelectedRow()[6]
-// 	input.last_used.Placeholder = recipes.table.SelectedRow()[7]
-//
-// 	input.name.Focus()
-//
-// 	return input
-// }
