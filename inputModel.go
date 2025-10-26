@@ -87,7 +87,9 @@ func (im InputModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "esc":
-			return im, tea.Quit
+			tm := NewTable()
+			return tm.Update(nil)
+			// return im, tea.Quit
 
 		case "ctrl+r":
 			im.cursorMode++
