@@ -81,7 +81,7 @@ func (im InputModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "esc":
-			tm := NewTable()
+			tm := NewRecipeTable()
 			return tm.Update(nil)
 			// return im, tea.Quit
 
@@ -107,7 +107,7 @@ func (im InputModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 				defer db.Close()
 				sqlite.UpdateRecipe(db, im.inputs[0].Value(), im.inputs[1].Value(), im.inputs[2].Value(), im.inputs[3].Value(), im.inputs[4].Value(), im.inputs[5].Value(), im.inputs[6].Value(), im.inputs[7].Value())
-				tm := NewTable()
+				tm := NewRecipeTable()
 				return tm.Update(nil)
 				// return im, tea.Quit
 			}

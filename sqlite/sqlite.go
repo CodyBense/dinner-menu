@@ -10,17 +10,16 @@ import (
 )
 
 type Menu struct {
-	Recipe recipe.Recipe
+	Recipes recipe.Recipe
 	Made   bool
 }
 
-func FindAll(db *sql.DB) ([]recipe.Recipe, error) {
+func FindAllRecipes(db *sql.DB) ([]recipe.Recipe, error) {
 	query := "SELECT * FROM recipes"
 
 	rows, err := db.Query(query)
 	if err != nil {
 		log.Fatalf("Find all query failed: %s\n", err)
-		return nil, err
 	}
 	defer rows.Close()
 
@@ -32,6 +31,30 @@ func FindAll(db *sql.DB) ([]recipe.Recipe, error) {
 		if err != nil {
 			log.Fatalf("FindAll row scan failed: %s\n", err)
 			return nil, err
+		}
+		recipes = append(recipes, *r)
+	}
+
+	return recipes, nil
+}
+
+func FindAllMenu(db *sql.DB) ([]recipe.Recipe, error) {
+	query := "SELECT * FROM menu"
+
+	rows, err := db.Query(query)
+	if err != nil {
+		log.Fatalf("Find all menu query faile: %s", err)
+	}
+
+	defer rows.Close()
+
+	var recipes []recipe.Recipe
+
+	for rows.Next() {
+		r := &recipe.Recipe{}
+		err := rows.Scan(&r.Id, &r.Name, &r.Cuisine_Type, &r.Flavor, &r.Difficulty, &r.Time, &r.Liked, &r.Link, &r.Last_Used)
+		if err != nil {
+			log.Fatalf("FindaAllMenu row scan failed: %s\n", err)
 		}
 		recipes = append(recipes, *r)
 	}

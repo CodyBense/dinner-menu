@@ -43,11 +43,17 @@ func (m TableModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			recipeName := m.table.SelectedRow()[0]
 			recipeID := sqlite.GetID(db, recipeName)
 			sqlite.SetLiked(db, recipeID)
-			m.table.SetRows(SetRowsData())
+			m.table.SetRows(SetRecipeData())
 			return m.Update(nil)
 		case "u":
 			input := initalModel(&m)
 			return input.Update(nil)
+		case "m":
+			menu := NewMenuTable()
+			return menu.Update(nil)
+		case "r":
+			recipe := NewRecipeTable()
+			return recipe.Update(nil)
 		}
 	}
 	m.table, cmd = m.table.Update(msg)
@@ -58,7 +64,7 @@ func (m TableModel) View() string {
 	return baseStyle.Render(m.table.View()) + "\n"
 }
 
-func SetRowsData() []table.Row {
+func SetRecipeData() []table.Row {
 	db, err := sql.Open("sqlite", "./sqlite/recipes.db")
 	if err != nil {
 		log.Fatalf("Could not connect to SQLite database: %s\n", err)
@@ -66,7 +72,7 @@ func SetRowsData() []table.Row {
 
 	defer db.Close()
 
-	recipes, err := sqlite.FindAll(db)
+	recipes, err := sqlite.FindAllRecipes(db)
 
 	rows := []table.Row{}
 
@@ -90,7 +96,7 @@ func SetRowsData() []table.Row {
 	return rows
 }
 
-func NewTable() TableModel {
+func NewRecipeTable() TableModel {
 	columns := []table.Column{
 		{Title: "Name", Width: 25},
 		{Title: "Cuisine Type", Width: 15},
@@ -102,7 +108,76 @@ func NewTable() TableModel {
 		{Title: "Last Used", Width: 20},
 	}
 
-	rows := SetRowsData()
+	rows := SetRecipeData()
+
+	t := table.New(
+		table.WithColumns(columns),
+		table.WithRows(rows),
+		table.WithFocused(true),
+	)
+
+	s := table.DefaultStyles()
+	s.Header = s.Header.
+		BorderStyle(lipgloss.NormalBorder()).
+		BorderForeground(lipgloss.Color("240")).
+		BorderBottom(true).
+		Bold(false)
+	s.Selected = s.Selected.
+		Foreground(lipgloss.Color("229")).
+		Background(lipgloss.Color("57")).
+		Bold(false)
+	t.SetStyles(s)
+
+	m := TableModel{t}
+
+	return m
+}
+
+func SetMenuData() []table.Row {
+	db, err := sql.Open("sqlite", "./sqlite/recipes.db")
+	if err != nil {
+		log.Fatalf("Could not connect to SQLite database: %s\n", err)
+	}
+
+	defer db.Close()
+
+	recipes, err := sqlite.FindAllMenu(db)
+
+	rows := []table.Row{}
+
+	for _, recipe := range recipes {
+		newRow := []table.Row{
+			{
+				recipe.Name,
+				recipe.Cuisine_Type,
+				recipe.Flavor,
+				recipe.Difficulty,
+				strconv.Itoa(recipe.Time),
+				strconv.FormatBool(recipe.Liked),
+				recipe.Link,
+				"false",
+			},
+		}
+
+		rows = append(rows, newRow...)
+	}
+
+	return rows
+}
+
+func NewMenuTable() TableModel {
+	columns := []table.Column{
+		{Title: "Name", Width: 25},
+		{Title: "Cuisine Type", Width: 15},
+		{Title: "Flavor", Width: 15},
+		{Title: "Difficulty", Width: 10},
+		{Title: "Time", Width: 10},
+		{Title: "Liked", Width: 10},
+		{Title: "Link", Width: 20},
+		{Title: "Made", Width: 20},
+	}
+
+	rows := SetMenuData()
 
 	t := table.New(
 		table.WithColumns(columns),
