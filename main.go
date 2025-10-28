@@ -31,7 +31,8 @@ func main() {
 	log.SetOutput(log_file)
 
 	m := NewRecipeTable()
-	if _, err := tea.NewProgram(m, tea.WithAltScreen()).Run(); err != nil {
+	if _, err := tea.NewProgram(m).Run(); err != nil {
+	// if _, err := tea.NewProgram(m, tea.WithAltScreen()).Run(); err != nil {
 		log.Fatalf("Error running program: %s\n", err)
 	}
 }
