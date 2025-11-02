@@ -5,12 +5,15 @@ import (
 	"log"
 	"os"
 
-	"github.com/CodyBense/dinner-menu/v2/tui"
-	"github.com/CodyBense/dinner-menu/v2/tui/consts"
+	"github.com/CodyBense/dinner-menu/tui"
+	"github.com/CodyBense/dinner-menu/tui/consts"
 	tea "github.com/charmbracelet/bubbletea"
+	"gorm.io/gorm"
 )
 
 func main() {
+
+	db, err := gorm.Open(sqlite.Open("./sqlite/recipes.db"), &gorm.Config{})
 	if f, err := tea.LogToFile("logs/debug.log", "help"); err != nil {
 		fmt.Println("Couldn't open a file for logging: ", err)
 		err := os.MkdirAll("./logs", 0755)

@@ -1,7 +1,7 @@
 package tui
 
 import (
-	"github.com/CodyBense/dinner-menu/v2/tui/consts"
+	"github.com/CodyBense/dinner-menu/tui/consts"
 	"github.com/atotto/clipboard"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/table"

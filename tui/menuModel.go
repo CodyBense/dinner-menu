@@ -1,7 +1,7 @@
 package tui
 
 import (
-	"github.com/CodyBense/dinner-menu/v2/tui/consts"
+	"github.com/CodyBense/dinner-menu/tui/consts"
 	"github.com/atotto/clipboard"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/table"
@@ -59,8 +59,8 @@ func NewMenuModel() MenuModel {
 
 	// var rows []table.Row
 	rows := []table.Row{
-		{"1", "Chicken", "Italian", "Savory", "Easy", "25", "True", "https://www.recipes.com/chicken", "2025-1-1"},
-		{"2", "Pho", "Asian", "Savory", "Medium", "30", "True", "https://www.recipes.com/pho", "2025-9-15"},
+		{"1", "Chicken", "Italian", "Savory", "Easy", "25", "True", "https://www.recipes.com/chicken", "False"},
+		{"2", "Pho", "Asian", "Savory", "Medium", "30", "True", "https://www.recipes.com/pho", "False"},
 	}
 
 	t := table.New(
