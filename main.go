@@ -1,38 +1,39 @@
 package main
 
 import (
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
-	_ "github.com/glebarez/go-sqlite"
+	"fmt"
 	"log"
 	"os"
-)
 
-type status int
-
-var baseStyle = lipgloss.NewStyle().
-	BorderStyle(lipgloss.NormalBorder()).
-	BorderForeground(lipgloss.Color("240"))
-
-var modles []tea.Model
-
-const (
-	recipes_table status = iota
-	menu_table
-	update_text
+	"github.com/CodyBense/dinner-menu/v2/tui"
+	"github.com/CodyBense/dinner-menu/v2/tui/consts"
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 func main() {
-	log_file, err := os.OpenFile("logs/log.txt", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-	if err != nil {
-		log.Fatalf("Could not open log filed; %s\n", err)
+	if f, err := tea.LogToFile("logs/debug.log", "help"); err != nil {
+		fmt.Println("Couldn't open a file for logging: ", err)
+		err := os.MkdirAll("./logs", 0755)
+		if err != nil {
+			fmt.Println("Couldn't create the logd dir: ", err)
+			panic(err)
+		}
+		os.Create("./logs/debug.log")
+		os.Exit(1)
+	} else {
+		defer func() {
+			err = f.Close()
+			if err != nil {
+				log.Fatal(err)
+			}
+		}()
 	}
 
-	log.SetOutput(log_file)
+	m, _ := tui.InitModel()
 
-	m := NewRecipeTable()
-	if _, err := tea.NewProgram(m).Run(); err != nil {
-	// if _, err := tea.NewProgram(m, tea.WithAltScreen()).Run(); err != nil {
-		log.Fatalf("Error running program: %s\n", err)
+	consts.P = tea.NewProgram(m, tea.WithAltScreen())
+	if _, err := consts.P.Run(); err != nil {
+		fmt.Println("Error running program: ", err)
+		os.Exit(1)
 	}
 }

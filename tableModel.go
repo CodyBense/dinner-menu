@@ -1,66 +1,66 @@
 package main
 
 import (
-	"database/sql"
-	"github.com/atotto/clipboard"
-	"github.com/charmbracelet/bubbles/table"
-	tea "github.com/charmbracelet/bubbletea"
+	// "database/sql"
+	// "github.com/atotto/clipboard"
+	// "github.com/charmbracelet/bubbles/table"
+	// tea "github.com/charmbracelet/bubbletea"
 	// "github.com/charmbracelet/lipgloss"
-	"github.com/codybense/dinner-menu/sqlite"
-	"log"
+	// "github.com/codybense/dinner-menu/sqlite"
+	// "log"
 	// "strconv"
 )
 
-type TableModel struct {
-	table table.Model
-}
-
-func (m TableModel) Init() tea.Cmd { return nil }
-
-func (m TableModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	var cmd tea.Cmd
-	switch msg := msg.(type) {
-	case tea.KeyMsg:
-		switch msg.String() {
-		case "esc":
-			if m.table.Focused() {
-				m.table.Blur()
-			} else {
-				m.table.Focus()
-			}
-		case "q", "ctrl+c":
-			return m, tea.Quit
-		case "enter", "space":
-			clipboard.WriteAll(m.table.SelectedRow()[6])
-		case "l":
-			db, err := sql.Open("sqlite", "./sqlite/recipes.db")
-			if err != nil {
-				log.Fatalf("Could not connect to SQLite database: %s\n", err)
-			}
-
-			defer db.Close()
-
-			recipeName := m.table.SelectedRow()[0]
-			recipeID := sqlite.GetID(db, recipeName)
-			sqlite.SetLiked(db, recipeID)
-			m.table.SetRows(SetRecipeData())
-			return m.Update(nil)
-		case "u":
-			input := initalModel(&m)
-			return input.Update(nil)
-		case "m":
-			menu := NewMenuTable()
-			return menu.Update(nil)
-		}
-	}
-	m.table, cmd = m.table.Update(msg)
-	return m, cmd
-}
-
-func (m TableModel) View() string {
-	return baseStyle.Render(m.table.View()) + "\n"
-}
-
+// type TableModel struct {
+// 	table table.Model
+// }
+//
+// func (m TableModel) Init() tea.Cmd { return nil }
+//
+// func (m TableModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+// 	var cmd tea.Cmd
+// 	switch msg := msg.(type) {
+// 	case tea.KeyMsg:
+// 		switch msg.String() {
+// 		case "esc":
+// 			if m.table.Focused() {
+// 				m.table.Blur()
+// 			} else {
+// 				m.table.Focus()
+// 			}
+// 		case "q", "ctrl+c":
+// 			return m, tea.Quit
+// 		case "enter", "space":
+// 			clipboard.WriteAll(m.table.SelectedRow()[6])
+// 		case "l":
+// 			db, err := sql.Open("sqlite", "./sqlite/recipes.db")
+// 			if err != nil {
+// 				log.Fatalf("Could not connect to SQLite database: %s\n", err)
+// 			}
+//
+// 			defer db.Close()
+//
+// 			recipeName := m.table.SelectedRow()[0]
+// 			recipeID := sqlite.GetID(db, recipeName)
+// 			sqlite.SetLiked(db, recipeID)
+// 			m.table.SetRows(SetRecipeData())
+// 			return m.Update(nil)
+// 		case "u":
+// 			input := initalModel(&m)
+// 			return input.Update(nil)
+// 		case "m":
+// 			menu := NewMenuTable()
+// 			return menu.Update(nil)
+// 		}
+// 	}
+// 	m.table, cmd = m.table.Update(msg)
+// 	return m, cmd
+// }
+//
+// func (m TableModel) View() string {
+// 	return baseStyle.Render(m.table.View()) + "\n"
+// }
+//
 //
 // func SetRecipeData() []table.Row {
 // 	db, err := sql.Open("sqlite", "./sqlite/recipes.db")
