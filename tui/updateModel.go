@@ -4,9 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	// "github.com/CodyBense/dinner-menu/v2/tui/consts"
 	"github.com/charmbracelet/bubbles/cursor"
-	// "github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/table"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
