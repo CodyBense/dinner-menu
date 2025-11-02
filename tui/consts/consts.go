@@ -30,6 +30,7 @@ type keymap struct {
 	MenuView   key.Binding
 	Down       key.Binding
 	Up         key.Binding
+	CopyLink   key.Binding
 	Quit       key.Binding
 }
 
@@ -46,17 +47,21 @@ var Keymap = keymap{
 		key.WithKeys("m"),
 		key.WithHelp("m", "Menu View"),
 	),
-	Quit: key.NewBinding(
-		key.WithKeys("q", "ctrl+c"),
-		key.WithHelp("q/ctrl+c", "Quit"),
-	),
 	Down: key.NewBinding(
 		key.WithKeys("j"),
-		key.WithHelp("j", "down"),
+		key.WithHelp("j", "Down"),
 	),
 	Up: key.NewBinding(
 		key.WithKeys("k"),
-		key.WithHelp("k", "up"),
+		key.WithHelp("k", "Up"),
+	),
+	CopyLink: key.NewBinding(
+		key.WithKeys("enter"),
+		key.WithHelp("enter", "Copy Link"),
+	),
+	Quit: key.NewBinding(
+		key.WithKeys("q", "ctrl+c"),
+		key.WithHelp("q/ctrl+c", "Quit"),
 	),
 }
 

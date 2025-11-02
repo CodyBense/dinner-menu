@@ -2,6 +2,7 @@ package tui
 
 import (
 	"github.com/CodyBense/dinner-menu/v2/tui/consts"
+	"github.com/atotto/clipboard"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
@@ -30,6 +31,8 @@ func (m RecipeModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.table.MoveDown(1)
 		case key.Matches(msg, consts.Keymap.Up):
 			m.table.MoveUp(1)
+		case key.Matches(msg, consts.Keymap.CopyLink):
+			clipboard.WriteAll(m.table.SelectedRow()[7])
 		}
 		switch msg.String() {
 		case "esc":
