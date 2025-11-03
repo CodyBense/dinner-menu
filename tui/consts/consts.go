@@ -1,6 +1,8 @@
 package consts
 
 import (
+	"github.com/CodyBense/dinner-menu/menu"
+	"github.com/CodyBense/dinner-menu/recipe"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
@@ -9,8 +11,8 @@ import (
 
 var (
 	P *tea.Program
-	// Rr *recipe.GormRepository
-	// Mr *menu.GormRepository
+	Rr *recipe.GormRepository
+	Mr *menu.GormRepository
 )
 
 var DocStyle = lipgloss.NewStyle().Margin(0, 2)

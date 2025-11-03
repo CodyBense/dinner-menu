@@ -1,6 +1,9 @@
 package tui
 
 import (
+	"log"
+	"strconv"
+
 	"github.com/CodyBense/dinner-menu/tui/consts"
 	"github.com/atotto/clipboard"
 	"github.com/charmbracelet/bubbles/key"
@@ -65,11 +68,30 @@ func NewRecipeModel() RecipeModel {
 		{Title: "Last Used", Width: 20},
 	}
 
-	// var rows []table.Row
-	rows := []table.Row{
-		{"1", "Pasta", "Italian", "Savory", "Easy", "20", "True", "https://www.recipes.com/pasta", "2025-10-31"},
-		{"2", "Ramen", "Asian", "Savory", "Easy", "20", "True", "https://www.recipes.com/ramen", "2025-10-30"},
+	var rows []table.Row
+	recipes, err := consts.Rr.GetAllRecipes()
+	if err != nil {
+		log.Fatal(err)
 	}
+
+	for _, recipe := range recipes {
+		newRow := table.Row{
+			strconv.Itoa(int(recipe.ID)),
+			recipe.Name,
+			recipe.Cuisine,
+			recipe.Flavor,
+			recipe.Difficulty,
+			strconv.Itoa(recipe.Time),
+			strconv.FormatBool(recipe.Liked),
+			recipe.Link,
+			recipe.Last_Used,
+		}
+		rows = append(rows, newRow)
+	}
+	// rows := []table.Row{
+	// 	{"1", "Pasta", "Italian", "Savory", "Easy", "20", "True", "https://www.recipes.com/pasta", "2025-10-31"},
+	// 	{"2", "Ramen", "Asian", "Savory", "Easy", "20", "True", "https://www.recipes.com/ramen", "2025-10-30"},
+	// }
 
 	t := table.New(
 		table.WithColumns(columns),
