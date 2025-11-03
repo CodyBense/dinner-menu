@@ -32,6 +32,7 @@ go.work.sum
 
 # logs
 log.txt
+*.log
 
 # Editor/IDE
 # .idea/
