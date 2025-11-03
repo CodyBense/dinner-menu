@@ -36,6 +36,12 @@ func (m RecipeModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.table.MoveUp(1)
 		case key.Matches(msg, consts.Keymap.CopyLink):
 			clipboard.WriteAll(m.table.SelectedRow()[7])
+		case key.Matches(msg, consts.Keymap.LikeRecipe):
+			id, err := strconv.ParseUint(m.table.SelectedRow()[0], 10, 32)
+			if err != nil {
+				log.Fatalf("Couldn't parse recipe ID to uint: %v", err)
+			}
+			consts.Rr.UpdateLiked(uint(id))
 		}
 		switch msg.String() {
 		case "esc":
@@ -68,6 +74,21 @@ func NewRecipeModel() RecipeModel {
 		{Title: "Last Used", Width: 20},
 	}
 
+	rows := SetRecipeRowData()
+
+	t := table.New(
+		table.WithColumns(columns),
+		table.WithRows(rows),
+		table.WithFocused(true),
+	)
+
+	s := consts.SetTableStyle()
+	t.SetStyles(s)
+
+	return RecipeModel{table: t}
+}
+
+func SetRecipeRowData() []table.Row {
 	var rows []table.Row
 	recipes, err := consts.Rr.GetAllRecipes()
 	if err != nil {
@@ -88,19 +109,6 @@ func NewRecipeModel() RecipeModel {
 		}
 		rows = append(rows, newRow)
 	}
-	// rows := []table.Row{
-	// 	{"1", "Pasta", "Italian", "Savory", "Easy", "20", "True", "https://www.recipes.com/pasta", "2025-10-31"},
-	// 	{"2", "Ramen", "Asian", "Savory", "Easy", "20", "True", "https://www.recipes.com/ramen", "2025-10-30"},
-	// }
 
-	t := table.New(
-		table.WithColumns(columns),
-		table.WithRows(rows),
-		table.WithFocused(true),
-	)
-
-	s := consts.SetTableStyle()
-	t.SetStyles(s)
-
-	return RecipeModel{table: t}
+	return rows
 }
