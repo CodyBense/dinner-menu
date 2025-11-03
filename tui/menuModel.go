@@ -46,7 +46,7 @@ func (m MenuModel) View() string {
 
 func NewMenuModel() MenuModel {
 	columns := []table.Column{
-		{Title: "ID", Width: 25},
+		{Title: "ID", Width: 5},
 		{Title: "Name", Width: 25},
 		{Title: "Cuisine", Width: 15},
 		{Title: "Flavor", Width: 10},

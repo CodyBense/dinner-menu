@@ -63,7 +63,7 @@ func (m RecipeModel) View() string {
 
 func NewRecipeModel() RecipeModel {
 	columns := []table.Column{
-		{Title: "ID", Width: 25},
+		{Title: "ID", Width: 5},
 		{Title: "Name", Width: 25},
 		{Title: "Cuisine", Width: 15},
 		{Title: "Flavor", Width: 10},
