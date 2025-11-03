@@ -2,8 +2,11 @@ package tui
 
 import (
 	"fmt"
+	"log"
+	"strconv"
 	"strings"
 
+	"github.com/CodyBense/dinner-menu/tui/consts"
 	"github.com/charmbracelet/bubbles/cursor"
 	"github.com/charmbracelet/bubbles/table"
 	"github.com/charmbracelet/bubbles/textinput"
@@ -42,6 +45,49 @@ func (m UpdateModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "tab", "shift+tab", "enter", "up", "down":
 			s := msg.String()
 			if s == "enter" && m.focusIndex == len(m.inputs) {
+				var id uint
+				var name, cuisine, flavor, difficulty, link, last_used string
+				var time int
+				var liked bool
+				for i, input := range m.inputs {
+					switch i {
+					case 0:
+						tempID, err := strconv.ParseUint(input.Value(), 10, 32)
+						if err != nil {
+							log.Fatalf("Couldn't parse ID: %v", err)
+						}
+						id = uint(tempID)
+					case 1:
+						name = input.Value()
+					case 2:
+						cuisine = input.Value()
+					case 3:
+						flavor = input.Value()
+					case 4:
+						difficulty = input.Value()
+					case 5:
+						tempTime, err := strconv.Atoi(input.Value())
+						if err != nil {
+							log.Fatalf("Couldn't parse time: %v", err)
+						}
+						time = tempTime
+					case 6:
+						tempLiked, err := strconv.ParseBool(input.Value())
+						if err != nil {
+							log.Fatalf("Couldn't parse time: %v", err)
+						}
+						liked = tempLiked
+					case 7:
+						link = input.Value()
+					case 8:
+						last_used = input.Value()
+					}
+				}
+				switch m.previousState {
+				case recipeView:
+					consts.Rr.UpdateRecipe(id, name, cuisine, flavor, difficulty, time, liked, link, last_used)
+				case menuView:
+				}
 				cmds = append(cmds, previousViewCmd())
 				return m, tea.Batch(cmds...)
 			}
