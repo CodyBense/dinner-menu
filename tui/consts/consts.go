@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	P *tea.Program
+	P  *tea.Program
 	Rr *recipe.GormRepository
 	Mr *menu.GormRepository
 )
@@ -33,6 +33,7 @@ type keymap struct {
 	Down       key.Binding
 	Up         key.Binding
 	CopyLink   key.Binding
+	LikeRecipe key.Binding
 	Quit       key.Binding
 }
 
@@ -60,6 +61,10 @@ var Keymap = keymap{
 	CopyLink: key.NewBinding(
 		key.WithKeys("enter"),
 		key.WithHelp("enter", "Copy Link"),
+	),
+	LikeRecipe: key.NewBinding(
+		key.WithKeys("l"),
+		key.WithHelp("l", "Like"),
 	),
 	Quit: key.NewBinding(
 		key.WithKeys("q", "ctrl+c"),
