@@ -54,6 +54,7 @@ type Repository interface {
 		link string,
 		last_used string,
 	) error
+	UpdateLiked(recipeID uint) error
 }
 
 type GormRepository struct {
@@ -116,17 +117,35 @@ func (g *GormRepository) CreateRecipe(
 	last_used string,
 ) (Recipe, error) {
 	recipe := Recipe{
-		Name: name,
-		Cuisine: cuisine,
-		Flavor: flavor,
+		Name:       name,
+		Cuisine:    cuisine,
+		Flavor:     flavor,
 		Difficulty: difficulty,
-		Time: time,
-		Liked: liked,
-		Link: link,
-		Last_Used: last_used,
+		Time:       time,
+		Liked:      liked,
+		Link:       link,
+		Last_Used:  last_used,
 	}
 	if err := g.DB.Create(&recipe).Error; err != nil {
 		return recipe, fmt.Errorf("Cannot create recipe: %v", err)
 	}
 	return recipe, nil
+}
+
+func (g *GormRepository) UpdateLiked(recipeID uint) error {
+	recipe, err := g.GetRecipeByID(recipeID)
+	if err != nil {
+		return fmt.Errorf("Cannot find recipe: %v", err)
+	}
+
+	if recipe.Liked == true {
+		recipe.Liked = false
+	} else {
+		recipe.Liked = true
+	}
+
+	if err := g.DB.Save(&recipe).Error; err != nil {
+		return fmt.Errorf("Unable to save recipe: %w", err)
+	}
+	return nil
 }
