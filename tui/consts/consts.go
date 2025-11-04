@@ -1,6 +1,8 @@
 package consts
 
 import (
+	"github.com/CodyBense/dinner-menu/menu"
+	"github.com/CodyBense/dinner-menu/recipe"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
@@ -8,9 +10,9 @@ import (
 )
 
 var (
-	P *tea.Program
-	// Rr *recipe.GormRepository
-	// Mr *menu.GormRepository
+	P  *tea.Program
+	Rr *recipe.GormRepository
+	Mr *menu.GormRepository
 )
 
 var DocStyle = lipgloss.NewStyle().Margin(0, 2)
@@ -31,6 +33,8 @@ type keymap struct {
 	Down       key.Binding
 	Up         key.Binding
 	CopyLink   key.Binding
+	LikeRecipe key.Binding
+	UpdateMade key.Binding
 	Quit       key.Binding
 }
 
@@ -58,6 +62,14 @@ var Keymap = keymap{
 	CopyLink: key.NewBinding(
 		key.WithKeys("enter"),
 		key.WithHelp("enter", "Copy Link"),
+	),
+	LikeRecipe: key.NewBinding(
+		key.WithKeys("l"),
+		key.WithHelp("l", "Like"),
+	),
+	UpdateMade: key.NewBinding(
+		key.WithKeys("m"),
+		key.WithHelp("m", "Made"),
 	),
 	Quit: key.NewBinding(
 		key.WithKeys("q", "ctrl+c"),

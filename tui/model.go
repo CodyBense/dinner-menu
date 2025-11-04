@@ -89,6 +89,7 @@ func (m MainModel) View() string {
 	case updateView:
 		return m.updateModel.View()
 	default:
+		m.recipeModel.table.SetRows(SetRecipeRowData())
 		return m.recipeModel.View()
 	}
 }

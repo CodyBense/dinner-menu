@@ -1,6 +1,9 @@
 package tui
 
 import (
+	"log"
+	"strconv"
+
 	"github.com/CodyBense/dinner-menu/tui/consts"
 	"github.com/atotto/clipboard"
 	"github.com/charmbracelet/bubbles/key"
@@ -33,6 +36,12 @@ func (m RecipeModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.table.MoveUp(1)
 		case key.Matches(msg, consts.Keymap.CopyLink):
 			clipboard.WriteAll(m.table.SelectedRow()[7])
+		case key.Matches(msg, consts.Keymap.LikeRecipe):
+			id, err := strconv.ParseUint(m.table.SelectedRow()[0], 10, 32)
+			if err != nil {
+				log.Fatalf("Couldn't parse recipe ID to uint: %v", err)
+			}
+			consts.Rr.UpdateLiked(uint(id))
 		}
 		switch msg.String() {
 		case "esc":
@@ -54,7 +63,7 @@ func (m RecipeModel) View() string {
 
 func NewRecipeModel() RecipeModel {
 	columns := []table.Column{
-		{Title: "ID", Width: 25},
+		{Title: "ID", Width: 5},
 		{Title: "Name", Width: 25},
 		{Title: "Cuisine", Width: 15},
 		{Title: "Flavor", Width: 10},
@@ -65,11 +74,7 @@ func NewRecipeModel() RecipeModel {
 		{Title: "Last Used", Width: 20},
 	}
 
-	// var rows []table.Row
-	rows := []table.Row{
-		{"1", "Pasta", "Italian", "Savory", "Easy", "20", "True", "https://www.recipes.com/pasta", "2025-10-31"},
-		{"2", "Ramen", "Asian", "Savory", "Easy", "20", "True", "https://www.recipes.com/ramen", "2025-10-30"},
-	}
+	rows := SetRecipeRowData()
 
 	t := table.New(
 		table.WithColumns(columns),
@@ -81,4 +86,29 @@ func NewRecipeModel() RecipeModel {
 	t.SetStyles(s)
 
 	return RecipeModel{table: t}
+}
+
+func SetRecipeRowData() []table.Row {
+	var rows []table.Row
+	recipes, err := consts.Rr.GetAllRecipes()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, recipe := range recipes {
+		newRow := table.Row{
+			strconv.Itoa(int(recipe.ID)),
+			recipe.Name,
+			recipe.Cuisine,
+			recipe.Flavor,
+			recipe.Difficulty,
+			strconv.Itoa(recipe.Time),
+			strconv.FormatBool(recipe.Liked),
+			recipe.Link,
+			recipe.Last_Used,
+		}
+		rows = append(rows, newRow)
+	}
+
+	return rows
 }

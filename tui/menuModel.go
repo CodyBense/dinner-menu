@@ -1,6 +1,9 @@
 package tui
 
 import (
+	"log"
+	"strconv"
+
 	"github.com/CodyBense/dinner-menu/tui/consts"
 	"github.com/atotto/clipboard"
 	"github.com/charmbracelet/bubbles/key"
@@ -32,6 +35,13 @@ func (m MenuModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.table.MoveUp(1)
 		case key.Matches(msg, consts.Keymap.CopyLink):
 			clipboard.WriteAll(m.table.SelectedRow()[7])
+		case key.Matches(msg, consts.Keymap.UpdateMade):
+			tempID, err := strconv.ParseUint(m.table.SelectedRow()[0], 10, 32)
+			if err != nil {
+				log.Fatalf("Couldn't parse ID; %v", err)
+			}
+			id := uint(tempID)
+			consts.Mr.UpdateMade(id)
 		}
 		switch msg.String() {
 		}
@@ -46,7 +56,7 @@ func (m MenuModel) View() string {
 
 func NewMenuModel() MenuModel {
 	columns := []table.Column{
-		{Title: "ID", Width: 25},
+		{Title: "ID", Width: 5},
 		{Title: "Name", Width: 25},
 		{Title: "Cuisine", Width: 15},
 		{Title: "Flavor", Width: 10},
@@ -57,11 +67,7 @@ func NewMenuModel() MenuModel {
 		{Title: "Made", Width: 20},
 	}
 
-	// var rows []table.Row
-	rows := []table.Row{
-		{"1", "Chicken", "Italian", "Savory", "Easy", "25", "True", "https://www.recipes.com/chicken", "False"},
-		{"2", "Pho", "Asian", "Savory", "Medium", "30", "True", "https://www.recipes.com/pho", "False"},
-	}
+	rows := SetMenuRowData()
 
 	t := table.New(
 		table.WithColumns(columns),
@@ -73,4 +79,29 @@ func NewMenuModel() MenuModel {
 	t.SetStyles(s)
 
 	return MenuModel{table: t}
+}
+
+func SetMenuRowData() []table.Row {
+	var rows []table.Row
+	menus, err := consts.Mr.GetAllMenu()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, menu := range menus {
+		newRow := table.Row{
+			strconv.Itoa(int(menu.ID)),
+			menu.Name,
+			menu.Cuisine,
+			menu.Flavor,
+			menu.Difficulty,
+			strconv.Itoa(menu.Time),
+			strconv.FormatBool(menu.Liked),
+			menu.Link,
+			strconv.FormatBool(menu.Made),
+		}
+		rows = append(rows, newRow)
+	}
+
+	return rows
 }
