@@ -35,6 +35,13 @@ func (m MenuModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.table.MoveUp(1)
 		case key.Matches(msg, consts.Keymap.CopyLink):
 			clipboard.WriteAll(m.table.SelectedRow()[7])
+		case key.Matches(msg, consts.Keymap.UpdateMade):
+			tempID, err := strconv.ParseUint(m.table.SelectedRow()[0], 10, 32)
+			if err != nil {
+				log.Fatalf("Couldn't parse ID; %v", err)
+			}
+			id := uint(tempID)
+			consts.Mr.UpdateMade(id)
 		}
 		switch msg.String() {
 		}

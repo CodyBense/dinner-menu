@@ -34,6 +34,7 @@ type keymap struct {
 	Up         key.Binding
 	CopyLink   key.Binding
 	LikeRecipe key.Binding
+	UpdateMade key.Binding
 	Quit       key.Binding
 }
 
@@ -65,6 +66,10 @@ var Keymap = keymap{
 	LikeRecipe: key.NewBinding(
 		key.WithKeys("l"),
 		key.WithHelp("l", "Like"),
+	),
+	UpdateMade: key.NewBinding(
+		key.WithKeys("m"),
+		key.WithHelp("m", "Made"),
 	),
 	Quit: key.NewBinding(
 		key.WithKeys("q", "ctrl+c"),
