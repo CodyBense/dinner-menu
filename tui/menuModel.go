@@ -1,6 +1,9 @@
 package tui
 
 import (
+	"log"
+	"strconv"
+
 	"github.com/CodyBense/dinner-menu/tui/consts"
 	"github.com/atotto/clipboard"
 	"github.com/charmbracelet/bubbles/key"
@@ -57,11 +60,7 @@ func NewMenuModel() MenuModel {
 		{Title: "Made", Width: 20},
 	}
 
-	// var rows []table.Row
-	rows := []table.Row{
-		{"1", "Chicken", "Italian", "Savory", "Easy", "25", "True", "https://www.recipes.com/chicken", "False"},
-		{"2", "Pho", "Asian", "Savory", "Medium", "30", "True", "https://www.recipes.com/pho", "False"},
-	}
+	rows := SetMenuRowData()
 
 	t := table.New(
 		table.WithColumns(columns),
@@ -73,4 +72,29 @@ func NewMenuModel() MenuModel {
 	t.SetStyles(s)
 
 	return MenuModel{table: t}
+}
+
+func SetMenuRowData() []table.Row {
+	var rows []table.Row
+	menus, err := consts.Mr.GetAllMenu()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, menu := range menus {
+		newRow := table.Row{
+			strconv.Itoa(int(menu.ID)),
+			menu.Name,
+			menu.Cuisine,
+			menu.Flavor,
+			menu.Difficulty,
+			strconv.Itoa(menu.Time),
+			strconv.FormatBool(menu.Liked),
+			menu.Link,
+			strconv.FormatBool(menu.Made),
+		}
+		rows = append(rows, newRow)
+	}
+
+	return rows
 }
