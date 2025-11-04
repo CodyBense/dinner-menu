@@ -107,14 +107,10 @@ func (g *GormRepository) UpdateRecipe(
 }
 
 func (g *GormRepository) CreateRecipe(
-	name string,
-	cuisine string,
-	flavor string,
-	difficulty string,
+	name, cuisine, flavor, difficulty string,
 	time int,
 	liked bool,
-	link string,
-	last_used string,
+	link, last_used string,
 ) (Recipe, error) {
 	recipe := Recipe{
 		Name:       name,
@@ -135,7 +131,7 @@ func (g *GormRepository) CreateRecipe(
 func (g *GormRepository) UpdateLiked(recipeID uint) error {
 	recipe, err := g.GetRecipeByID(recipeID)
 	if err != nil {
-		return fmt.Errorf("Cannot find recipe: %v", err)
+		return err
 	}
 
 	if recipe.Liked == true {
