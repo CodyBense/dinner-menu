@@ -25,17 +25,21 @@ type RecipeViewMsg struct{}
 type MenuViewMsg struct{}
 type UpdateViewMsg struct{}
 type PreviousStateMsg struct{}
+type AddToMenuMsg struct{}
+type RemoveFromMenuMsg struct{}
 
 type keymap struct {
-	UpdateView key.Binding
-	RecipeView key.Binding
-	MenuView   key.Binding
-	Down       key.Binding
-	Up         key.Binding
-	CopyLink   key.Binding
-	LikeRecipe key.Binding
-	UpdateMade key.Binding
-	Quit       key.Binding
+	UpdateView     key.Binding
+	RecipeView     key.Binding
+	MenuView       key.Binding
+	Down           key.Binding
+	Up             key.Binding
+	CopyLink       key.Binding
+	LikeRecipe     key.Binding
+	UpdateMade     key.Binding
+	AddToMenu      key.Binding
+	RemoveFromMenu key.Binding
+	Quit           key.Binding
 }
 
 var Keymap = keymap{
@@ -70,6 +74,14 @@ var Keymap = keymap{
 	UpdateMade: key.NewBinding(
 		key.WithKeys("m"),
 		key.WithHelp("m", "Made"),
+	),
+	AddToMenu: key.NewBinding(
+		key.WithKeys("a"),
+		key.WithKeys("a", "Add"),
+	),
+	RemoveFromMenu: key.NewBinding(
+		key.WithKeys("d"),
+		key.WithKeys("d", "Remove"),
 	),
 	Quit: key.NewBinding(
 		key.WithKeys("q", "ctrl+c"),
