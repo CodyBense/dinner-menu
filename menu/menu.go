@@ -49,6 +49,7 @@ type Repository interface {
 	UpdateMenu(id, recipeID uint, name, cuisine, flavor, difficulty string, time int, liked bool, link string, made bool) error
 	CreateMenu(id, recipeID uint, name, cuisine, flavor, difficulty string, time int, liked bool, link string, made bool) (Menu, error)
 	UpdateMade(menuID uint) error
+	RemoveMenu(menuID uint) error
 }
 
 type GormRepository struct {
@@ -100,7 +101,7 @@ func (g *GormRepository) UpdateMenu(
 }
 
 func (g *GormRepository) CreateMenu(
-	id, recipeID uint,
+	recipeID uint,
 	name, cuisine, flavor, difficulty string,
 	time int,
 	liked bool,
@@ -141,4 +142,9 @@ func (g *GormRepository) UpdateMade(menuID uint) error {
 		return fmt.Errorf("Couldn't save menu: %v", err)
 	}
 	return nil
+}
+
+func (g *GormRepository) RemoveMenu(menuID uint) error {
+	result := g.DB.Delete(&Menu{}, menuID)
+	return result.Error
 }

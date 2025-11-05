@@ -1,6 +1,9 @@
 package tui
 
 import (
+	"log"
+	"strconv"
+
 	"github.com/CodyBense/dinner-menu/tui/consts"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
@@ -44,6 +47,10 @@ func (m MainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.state = updateView
 	case consts.PreviousStateMsg:
 		m.state = m.previousState
+	case consts.AddToMenuMsg:
+		m.AddRecipeToMenu()
+	case consts.RemoveFromMenuMsg:
+		m.RemoveRecipeFromMenu()
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, consts.Keymap.Quit):
@@ -85,12 +92,40 @@ func (m MainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m MainModel) View() string {
 	switch m.state {
 	case menuView:
+		m.menuModel.table.SetRows(SetMenuRowData())
 		return m.menuModel.View()
 	case updateView:
 		return m.updateModel.View()
 	default:
 		m.recipeModel.table.SetRows(SetRecipeRowData())
 		return m.recipeModel.View()
+	}
+}
+
+func (m MainModel) AddRecipeToMenu() {
+	tempId := m.recipeModel.table.SelectedRow()[0]
+	id, err := strconv.ParseUint(tempId, 10, 32)
+	if err != nil {
+		log.Fatalf("Couldn't parse uint: %v", err)
+	}
+	recipe, err := consts.Rr.GetRecipeByID(uint(id))
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = consts.Mr.CreateMenu(recipe.ID, recipe.Name, recipe.Cuisine, recipe.Flavor, recipe.Difficulty, recipe.Time, recipe.Liked, recipe.Link, false)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func (m MainModel) RemoveRecipeFromMenu() {
+	menuID, err := strconv.ParseUint(m.menuModel.table.SelectedRow()[0], 10, 32)
+	if err != nil {
+		log.Fatalf("Couldn't parse uint: %v", err)
+	}
+	err = consts.Mr.RemoveMenu(uint(menuID))
+	if err != nil {
+		log.Fatalf("Failed to delete Menu item: %v", err)
 	}
 }
 

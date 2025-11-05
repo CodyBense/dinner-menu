@@ -42,6 +42,8 @@ func (m RecipeModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				log.Fatalf("Couldn't parse recipe ID to uint: %v", err)
 			}
 			consts.Rr.UpdateLiked(uint(id))
+		case key.Matches(msg, consts.Keymap.AddToMenu):
+			cmds = append(cmds, addToMenuCmd())
 		}
 		switch msg.String() {
 		case "esc":

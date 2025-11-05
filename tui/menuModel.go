@@ -42,6 +42,8 @@ func (m MenuModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			id := uint(tempID)
 			consts.Mr.UpdateMade(id)
+		case key.Matches(msg, consts.Keymap.RemoveFromMenu):
+			cmds = append(cmds, removeFromMenuCMD())
 		}
 		switch msg.String() {
 		}
