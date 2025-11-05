@@ -1,4 +1,4 @@
-module github.com/codybense/dinner-menu
+module github.com/CodyBense/dinner-menu
 
 go 1.25.3
 
