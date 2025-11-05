@@ -1,0 +1,8 @@
+help 2025/11/04 19:42:45 Rows before delete:
+[[1 Lemon Garlic Butter Beans    20 false https://shortgirltallorder.com/creamy-lemon-garlic false] [2 Shrimp and Spinch Stuffed Pasta Rolls    50 false https://recipeamelia.com/shrimp-and-spinach-stuffed-pasta-rolls/ false]]
+help 2025/11/04 19:42:45 Rows after delete:
+[[1 Lemon Garlic Butter Beans    20 false https://shortgirltallorder.com/creamy-lemon-garlic false]]
+help 2025/11/04 19:44:39 Rows before delete:
+[[1 Lemon Garlic Butter Beans    20 false https://shortgirltallorder.com/creamy-lemon-garlic false]]
+help 2025/11/04 19:44:39 Rows after delete:
+[]
