@@ -31,9 +31,7 @@ go.work.sum
 *.db
 
 # logs
-logs/
-logs/debug.log
-*.log
+log.txt
 
 # Editor/IDE
 # .idea/
