@@ -121,11 +121,13 @@ func (m MenuModel) SendEmail() {
 		log.Fatalf("Couldn't load env file: %v", err)
 	}
 	google_app_pass := os.Getenv("GOOGLE_APP_PASSWORD")
+	sender_email := os.Getenv("SENDER_EMAIL")
+	receiver_email := os.Getenv("RECEIVER_EMAIL")
 
 	message := gomail.NewMessage()
 
-	message.SetHeader("From", "codybense@gmail.com")
-	message.SetHeader("To", "codybense@proton.me")
+	message.SetHeader("From", sender_email)
+	message.SetHeader("To", receiver_email)
 	message.SetHeader("Subject", "This is a test email")
 
 	var msg_body string
@@ -134,10 +136,9 @@ func (m MenuModel) SendEmail() {
 		msg_body += fmt.Sprintf("%s: %s\n\n",row[1], row[7])
 	}
 
-	log.Println(msg_body)
 	message.SetBody("text/plain", msg_body)
 
-	dialer := gomail.NewDialer("smtp.gmail.com", 587, "codybense@gmail.com", google_app_pass)
+	dialer := gomail.NewDialer("smtp.gmail.com", 587, sender_email, google_app_pass)
 
 	if err := dialer.DialAndSend(message); err != nil {
 		log.Fatalf("Couldn't send the email: %v", err)
