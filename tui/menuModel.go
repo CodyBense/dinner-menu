@@ -1,7 +1,9 @@
 package tui
 
 import (
+	"fmt"
 	"log"
+	"os"
 	"strconv"
 
 	"github.com/CodyBense/dinner-menu/tui/consts"
@@ -9,6 +11,8 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/joho/godotenv"
+	gomail "gopkg.in/gomail.v2"
 )
 
 type MenuModel struct {
@@ -44,6 +48,8 @@ func (m MenuModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			consts.Mr.UpdateMade(id)
 		case key.Matches(msg, consts.Keymap.RemoveFromMenu):
 			cmds = append(cmds, removeFromMenuCMD())
+		case key.Matches(msg, consts.Keymap.SendEmail):
+			m.SendEmail()
 		}
 		switch msg.String() {
 		}
@@ -86,6 +92,7 @@ func NewMenuModel() MenuModel {
 func SetMenuRowData() []table.Row {
 	var rows []table.Row
 	menus, err := consts.Mr.GetAllMenu()
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -106,4 +113,33 @@ func SetMenuRowData() []table.Row {
 	}
 
 	return rows
+}
+
+func (m MenuModel) SendEmail() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Couldn't load env file: %v", err)
+	}
+	google_app_pass := os.Getenv("GOOGLE_APP_PASSWORD")
+
+	message := gomail.NewMessage()
+
+	message.SetHeader("From", "codybense@gmail.com")
+	message.SetHeader("To", "codybense@proton.me")
+	message.SetHeader("Subject", "This is a test email")
+
+	var msg_body string
+
+	for _, row := range m.table.Rows() {
+		msg_body += fmt.Sprintf("%s: %s\n\n",row[1], row[7])
+	}
+
+	log.Println(msg_body)
+	message.SetBody("text/plain", msg_body)
+
+	dialer := gomail.NewDialer("smtp.gmail.com", 587, "codybense@gmail.com", google_app_pass)
+
+	if err := dialer.DialAndSend(message); err != nil {
+		log.Fatalf("Couldn't send the email: %v", err)
+	}
 }
