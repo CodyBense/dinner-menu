@@ -39,6 +39,7 @@ type keymap struct {
 	UpdateMade     key.Binding
 	AddToMenu      key.Binding
 	RemoveFromMenu key.Binding
+	SendEmail      key.Binding
 	Quit           key.Binding
 }
 
@@ -82,6 +83,10 @@ var Keymap = keymap{
 	RemoveFromMenu: key.NewBinding(
 		key.WithKeys("d"),
 		key.WithKeys("d", "Remove"),
+	),
+	SendEmail: key.NewBinding(
+		key.WithKeys("s"),
+		key.WithKeys("s", "Send Email"),
 	),
 	Quit: key.NewBinding(
 		key.WithKeys("q", "ctrl+c"),

@@ -51,6 +51,7 @@ func (m MainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.AddRecipeToMenu()
 	case consts.RemoveFromMenuMsg:
 		m.RemoveRecipeFromMenu()
+		m.menuModel.table.GotoTop()
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, consts.Keymap.Quit):
@@ -116,6 +117,7 @@ func (m MainModel) AddRecipeToMenu() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// m.menuModel.table.GotoTop()
 }
 
 func (m MainModel) RemoveRecipeFromMenu() {
